@@ -1,0 +1,52 @@
+// TCES 330: Project B
+// Trung Do & Rohan Seam
+//	This module is to implement the eight functions in the ALU as specified by 
+// the select input. 
+module ALU(A, B, Sel, Q);
+	input [2:0] Sel;     // function select
+	input [15:0] A, B;   // input data
+	output [15:0] Q; 		// ALU output (result)
+	
+	always @* begin
+		case (Sel)				// 8 cases for 8 functions
+			0: Q = 0;
+			1: Q = A + B;
+			2: Q = A - B;
+			3: Q = A;
+			4: Q = A ^ B;
+			5: Q = A | B;
+			6: Q = A & B;
+			7: Q = A + 1;
+		endcase 
+	end
+endmodule 
+
+// testbench
+module ALU_testbench();
+	logic [2:0] Sel;     // function select
+	logic [15:0] A, B;   // input data
+	logic [15:0] Q; 
+	integer i;
+	
+	// Instantiate the module (ALU)
+	ALU DUT(A, B, Sel, Q);
+	
+	initial begin
+		$display("Select \t A \t B \t Q");
+		// Test first function where output should be 0.
+		Sel = 0; #40;
+		for (i = 0; i < 4; i++) begin
+			{A, B} = $urandom_range(0, 10000); #5;
+			assert(Q == 0) else $error("Incorrect! Should be Q = 0!"); 
+		end
+		
+		Sel = 1; #40;
+		for (i = 0; i < 4; i++) begin
+			{A, B} = $urandom_range(0, 10000); #5;
+			assert(Q == A + B) else $error("Incorrect! Should be Q = A + B!"); 
+		end
+	end
+	
+	initial $monitor(Sel,,,,A,,,,B,,,,Q);
+	
+endmodule 
